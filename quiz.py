@@ -1,25 +1,31 @@
+# Thinter 라이브러리 사용
 import tkinter as tk
 
+# puzzlegame 클래스 사용
 class PuzzleGame:
     def __init__(self, root):
+        
+        # 메인창 제목 설정
         self.root = root
         self.root.title("20가지 수수께끼 맞추기")
+        
+        #게임 상태 초기화함
+        self.score = 0 # 현재 점수
+        self.current_question = 0 # 현재 문제 번호
 
-        self.score = 0
-        self.current_question = 0
+        self.question_label = tk.Label(root, text="") # 문제 표시
+        self.question_label.pack(pady=10) # 위젯을 GUI에 추가하고 여백을 설정함
 
-        self.question_label = tk.Label(root, text="")
-        self.question_label.pack(pady=10)
+        self.answer_entry = tk.Entry(root) # 답 입력
+        self.answer_entry.pack(pady=10) # 위젯을 GUI에 추가하고 여백을 설정함
 
-        self.answer_entry = tk.Entry(root)
-        self.answer_entry.pack(pady=10)
+        self.submit_button = tk.Button(root, text="제출", command=self.check_answer) # 답 제출 버튼 생성
+        self.submit_button.pack(pady=10)# 위젯을 GUI에 추가하고 여백을 설정함
 
-        self.submit_button = tk.Button(root, text="제출", command=self.check_answer)
-        self.submit_button.pack(pady=10)
+        self.result_label = tk.Label(root, text="") # 정답 여부를 표시
+        self.result_label.pack(pady=10)# 위젯을 GUI에 추가하고 여백을 설정함
 
-        self.result_label = tk.Label(root, text="")
-        self.result_label.pack(pady=10)
-
+        # 퍼즐 문제, 정답 리스트
         self.puzzle = [
             ["백가지 과일이 죽기 직전을 다른 말로?", "백과사전"],
             ["청바지를 돋보이게 하는 걸음걸이는?", "진주목걸이"],
@@ -42,7 +48,7 @@ class PuzzleGame:
             ["달에 사는 물고기는?", "문어"],
             ["검이 정색하면?", "검정색"]
         ]
-
+        #초기화할 때 첫번째 문제 시작
         self.load_question()
 
     def load_question(self):
@@ -52,29 +58,34 @@ class PuzzleGame:
             self.answer_entry.delete(0, tk.END)
             self.result_label.config(text="")
         else:
+            # 문제 다풀면 결과 표시
             self.show_result()
-
+    # 답 확인 및 결과 표시
     def check_answer(self):
+        #내가 쓴 답이랑 정답 표시
         user_input = self.answer_entry.get()
         correct_answer = self.puzzle[self.current_question][1]
-
+        #정답이면 점수 +1, 틀리면 틀린 결과 표시
         if user_input == correct_answer:
             self.score += 1
             self.result_label.config(text=f"정답입니다! 현재 점수는 {self.score}점 입니다.")
         else:
             self.result_label.config(text=f"틀렸습니다. 정답은 {correct_answer}입니다.")
-
+        # 다음 문제 
         self.current_question += 1
         self.load_question()
-
+    # 최종 결과 표시
     def show_result(self):
+        # 총 문제 개수, 맞힌 문제 수 표시 및 각 문제의 답을 정렬
         result_text = f"총 {len(self.puzzle)}문제 중 {self.score}문제를 맞혔습니다.\n\n정답 목록:\n"
         result_text += "\n".join([f"{i + 1}. {question} - {answer}" for i, (question, answer) in enumerate(self.puzzle)])
         self.question_label.config(text=result_text)
         self.answer_entry.destroy()
         self.submit_button.destroy()
-
+# 메인 코드 
 if __name__ == "__main__":
+    # Tkinter의 메인 창 생성, puzzlegame 클래스 생성
     root = tk.Tk()
     app = PuzzleGame(root)
+    # Tkinter 실행 하여 GUI 표시
     root.mainloop()
